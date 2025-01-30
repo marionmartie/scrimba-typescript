@@ -1,11 +1,15 @@
+/**
+ * Challenge: Fix the TS warnings about orderHistory!
+ */
+
 type Pizza = {
     name: string
     price: number
 }
 
 type Order = {
-    id: number,
-    pizza: Pizza,
+    id: number
+    pizza: Pizza
     status: string
 }
 
@@ -15,10 +19,10 @@ const menu = [
     { name: "Hawaiian", price: 10 },
     { name: "Veggie", price: 9 },
 ]
-
+ 
 let cashInRegister = 100
 let nextOrderId = 1
-const orderQueue = []
+const orderHistory: Order[] = []
 
 function addNewPizza(pizzaObj: Pizza) {
     menu.push(pizzaObj)
@@ -26,20 +30,22 @@ function addNewPizza(pizzaObj: Pizza) {
 
 function placeOrder(pizzaName: string) {
     const selectedPizza = menu.find(pizzaObj => pizzaObj.name === pizzaName)
-    if(selectedPizza === undefined) {
-        console.log(`${selectedPizza} cannot be found`);
-        return  
+    if (!selectedPizza) {
+        console.error(`${pizzaName} does not exist in the menu`)
+        return
     }
     cashInRegister += selectedPizza.price
     const newOrder = { id: nextOrderId++, pizza: selectedPizza, status: "ordered" }
-    orderQueue.push(newOrder)
+    orderHistory.push(newOrder)
     return newOrder
 }
 
-
 function completeOrder(orderId: number) {
-    const order = orderQueue.find(order => order.id === orderId)
-
+    const order = orderHistory.find(order => order.id === orderId)
+    if (order?.status === undefined) {
+        console.error(`${order?.status} is undefined`);
+        return
+    } 
     order.status = "completed"
     return order
 }
@@ -53,4 +59,6 @@ completeOrder(1)
 
 console.log("Menu:", menu)
 console.log("Cash in register:", cashInRegister)
-console.log("Order queue:", orderQueue)
+console.log("Order queue:", orderHistory)
+
+export {}
