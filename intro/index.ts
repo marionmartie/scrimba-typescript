@@ -3,6 +3,12 @@ type Pizza = {
     price: number
 }
 
+type Order = {
+    id: number,
+    pizza: Pizza,
+    status: string
+}
+
 const menu = [
     { name: "Margherita", price: 8 },
     { name: "Pepperoni", price: 10 },
@@ -29,12 +35,6 @@ function placeOrder(pizzaName: string) {
     orderQueue.push(newOrder)
     return newOrder
 }
-
-/**
- * Challenge: Teach TS what data type should be used for the 
- * orderId in the completeOrder function. Then check for any
- * additional warnings TS comes up with and fix those.
- */
 
 
 function completeOrder(orderId: number) {
