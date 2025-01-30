@@ -1,16 +1,17 @@
-/**
- * Challenge: Fix the TS warnings about orderHistory!
- */
-
 type Pizza = {
     name: string
     price: number
 }
+/**
+ * Challenge: using literal types and unions, update the Order status so that
+ * it can only ever be "ordered" or "completed"
+ */
+type OrderStatus = "ordered" | "completed"
 
 type Order = {
     id: number
     pizza: Pizza
-    status: string
+    status: OrderStatus
 }
 
 const menu = [
@@ -35,7 +36,7 @@ function placeOrder(pizzaName: string) {
         return
     }
     cashInRegister += selectedPizza.price
-    const newOrder = { id: nextOrderId++, pizza: selectedPizza, status: "ordered" }
+    const newOrder: Order = { id: nextOrderId++, pizza: selectedPizza, status: "ordered" }
     orderHistory.push(newOrder)
     return newOrder
 }
