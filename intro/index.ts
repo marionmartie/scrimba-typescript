@@ -1,31 +1,30 @@
 type Pizza = {
+    id: number
     name: string
     price: number
 }
-/**
- * Challenge: using literal types and unions, update the Order status so that
- * it can only ever be "ordered" or "completed"
- */
-type OrderStatus = "ordered" | "completed"
 
 type Order = {
     id: number
     pizza: Pizza
-    status: OrderStatus
+    status: "ordered" | "completed"
 }
 
-const menu = [
-    { name: "Margherita", price: 8 },
-    { name: "Pepperoni", price: 10 },
-    { name: "Hawaiian", price: 10 },
-    { name: "Veggie", price: 9 },
-]
- 
+
 let cashInRegister = 100
 let nextOrderId = 1
-const orderHistory: Order[] = []
+let nextOrderPizzaId = 1
+const orderQueue: Order[] = []
 
-function addNewPizza(pizzaObj: Pizza) {
+const menu: Pizza[] = [
+    { id: nextOrderPizzaId++, name: "Margherita", price: 8 },
+    { id: nextOrderPizzaId++, name: "Pepperoni", price: 10 },
+    { id: nextOrderPizzaId++, name: "Hawaiian", price: 10 },
+    { id: nextOrderPizzaId++, name: "Veggie", price: 9 },
+]
+
+function addNewPizza(pizzaObj: Pizza): void {
+    pizzaObj.id = nextOrderPizzaId++
     menu.push(pizzaObj)
 }
 
@@ -37,29 +36,48 @@ function placeOrder(pizzaName: string) {
     }
     cashInRegister += selectedPizza.price
     const newOrder: Order = { id: nextOrderId++, pizza: selectedPizza, status: "ordered" }
-    orderHistory.push(newOrder)
+    orderQueue.push(newOrder)
     return newOrder
 }
 
 function completeOrder(orderId: number) {
-    const order = orderHistory.find(order => order.id === orderId)
-    if (order?.status === undefined) {
-        console.error(`${order?.status} is undefined`);
+    const order = orderQueue.find(order => order.id === orderId)
+    if (!order) {
+        console.error(`${orderId} was not found in the orderQueue`)
         return
-    } 
+    }
     order.status = "completed"
     return order
 }
 
-addNewPizza({ name: "Chicken Bacon Ranch", price: 12 })
-addNewPizza({ name: "BBQ Chicken", price: 12 })
-addNewPizza({ name: "Spicy Sausage", price: 11 })
+/**
+ * Challenge (part 1): add a return type to the getPizzaDetail function.
+ * 
+ * NOTE: you're very likely going to get a big TS warning once you do this 😅
+ * Don't fret, we'll address this warning next!
+ */
 
-placeOrder("Chicken Bacon Ranch")
-completeOrder(1)
+export function getPizzaDetail(identifier: string | number) : Pizza | undefined {
+    if (typeof identifier === "string") {
+        return menu.find(pizza => pizza.name.toLowerCase() === identifier.toLowerCase())
+    } else if (typeof identifier === "number") {
+        return menu.find(pizza => pizza.id === identifier)
+    } else {
+        throw new TypeError("Parameter `identifier` must be either a string or a number")
+    }
+}
 
-console.log("Menu:", menu)
-console.log("Cash in register:", cashInRegister)
-console.log("Order queue:", orderHistory)
+addNewPizza({ id: nextOrderPizzaId++, name: "Chicken Bacon Ranch", price: 12 })
+addNewPizza({ id: nextOrderPizzaId++, name: "BBQ Chicken", price: 12 })
+addNewPizza({ id: nextOrderPizzaId++, name: "Spicy Sausage", price: 11 })
 
-export {}
+// placeOrder("Chicken Bacon Ranch")
+// placeOrder("Pepperoni")
+// completeOrder(1)
+// placeOrder("Anchovy")
+// placeOrder("Veggie")
+// completeOrder(2)
+
+// console.log("Menu:", menu)
+// console.log("Cash in register:", cashInRegister)
+// console.log("Order queue:", orderQueue)

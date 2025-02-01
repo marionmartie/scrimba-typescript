@@ -1,45 +1,59 @@
 "use strict";
-/**
- * Challenge: Fix the TS warnings about orderHistory!
- */
 Object.defineProperty(exports, "__esModule", { value: true });
-var menu = [
-    { name: "Margherita", price: 8 },
-    { name: "Pepperoni", price: 10 },
-    { name: "Hawaiian", price: 10 },
-    { name: "Veggie", price: 9 },
+exports.getPizzaDetail = getPizzaDetail;
+const menu = [
+    { id: 1, name: "Margherita", price: 8 },
+    { id: 2, name: "Pepperoni", price: 10 },
+    { id: 3, name: "Hawaiian", price: 10 },
+    { id: 4, name: "Veggie", price: 9 },
 ];
-var cashInRegister = 100;
-var nextOrderId = 1;
-var orderHistory = [];
+let cashInRegister = 100;
+let nextOrderId = 1;
+const orderQueue = [];
 function addNewPizza(pizzaObj) {
     menu.push(pizzaObj);
 }
 function placeOrder(pizzaName) {
-    var selectedPizza = menu.find(function (pizzaObj) { return pizzaObj.name === pizzaName; });
+    const selectedPizza = menu.find(pizzaObj => pizzaObj.name === pizzaName);
     if (!selectedPizza) {
-        console.error("".concat(pizzaName, " does not exist in the menu"));
+        console.error(`${pizzaName} does not exist in the menu`);
         return;
     }
     cashInRegister += selectedPizza.price;
-    var newOrder = { id: nextOrderId++, pizza: selectedPizza, status: "ordered" };
-    orderHistory.push(newOrder);
+    const newOrder = { id: nextOrderId++, pizza: selectedPizza, status: "ordered" };
+    orderQueue.push(newOrder);
     return newOrder;
 }
 function completeOrder(orderId) {
-    var order = orderHistory.find(function (order) { return order.id === orderId; });
-    if ((order === null || order === void 0 ? void 0 : order.status) === undefined) {
-        console.error("".concat(order === null || order === void 0 ? void 0 : order.status, " is undefined"));
+    const order = orderQueue.find(order => order.id === orderId);
+    if (!order) {
+        console.error(`${orderId} was not found in the orderQueue`);
         return;
     }
     order.status = "completed";
     return order;
 }
-addNewPizza({ name: "Chicken Bacon Ranch", price: 12 });
-addNewPizza({ name: "BBQ Chicken", price: 12 });
-addNewPizza({ name: "Spicy Sausage", price: 11 });
-placeOrder("Chicken Bacon Ranch");
-completeOrder(1);
+function getPizzaDetail(identifier) {
+    if (typeof identifier === "string") {
+        menu.find(pizza => pizza.name.toLowerCase() === identifier.toLowerCase());
+    }
+    else if (typeof identifier === "number") {
+        menu.find(pizza => pizza.id === identifier);
+    }
+    else {
+        throw new TypeError("Parameter must be either string or number");
+    }
+}
+// addNewPizza({ id: 5, name: "Chicken Bacon Ranch", price: 12 })
+// addNewPizza({ id: 6, name: "BBQ Chicken", price: 12 })
+// addNewPizza({ id: 7, name: "Spicy Sausage", price: 11 })
+// placeOrder("Chicken Bacon Ranch")
+// placeOrder("Pepperoni")
+// completeOrder(1)
+// placeOrder("Anchovy")
+// placeOrder("Veggie")
+// completeOrder(2)
 console.log("Menu:", menu);
 console.log("Cash in register:", cashInRegister);
-console.log("Order queue:", orderHistory);
+console.log("Order queue:", orderQueue);
+//# sourceMappingURL=index.js.map
